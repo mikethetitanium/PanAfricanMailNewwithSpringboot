@@ -356,71 +356,54 @@
             });
         });
         
-        document.getElementById('story-form')?.addEventListener('submit', function(e) {
-            e.preventDefault();
-            // This would normally send data to an API
-            Swal.fire({
-                title: 'Success!',
-                text: 'Story shared successfully',
-                icon: 'success',
-                confirmButtonColor: '#f97316'
-            }).then(() => {
-                showPage('home');
-            });
-        });
         
-        document.getElementById('login-form')?.addEventListener('submit', function(e) {
-            e.preventDefault();
-            // This would normally authenticate with an API
-            simulateLogin();
-        });
-        
-        document.getElementById('signup-form')?.addEventListener('submit', function(e) {
-            e.preventDefault();
-            // This would normally register with an API
-            simulateLogin();
-        });
-        
-        // Simulated login for prototype
-        function simulateLogin() {
-            // Hide auth buttons, show user menu
-            document.getElementById('auth-buttons').classList.add('hidden');
-            document.getElementById('user-menu').classList.remove('hidden');
-            
-            // For admin demo, show admin nav
-            document.getElementById('admin-nav-item').classList.remove('hidden');
-            
-            Swal.fire({
-                title: 'Success!',
-                text: 'You are now logged in',
-                icon: 'success',
-                confirmButtonColor: '#3b82f6'
-            }).then(() => {
-                showPage('home');
-            });
-        }
-        
-        // Logout function
-        function logout() {
-            // Show auth buttons, hide user menu
-            document.getElementById('auth-buttons').classList.remove('hidden');
-            document.getElementById('user-menu').classList.add('hidden');
-            document.getElementById('admin-nav-item').classList.add('hidden');
-            
-            Swal.fire({
-                title: 'Logged Out',
-                text: 'You have been logged out successfully',
-                icon: 'info',
-                confirmButtonColor: '#3b82f6'
-            }).then(() => {
-                showPage('home');
-            });
-        }
         
         // Initialize the application
         document.addEventListener('DOMContentLoaded', function() {
             // Start on home page
             showPage('home');
         });</script>
+
+        <script>
+    // Fetch current user and update nav bar
+    function checkAuthStatus() {
+        fetch('/api/current-user')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Not logged in');
+                }
+                return response.json();
+            })
+            .then(user => {
+                document.getElementById('login-link').style.display = 'none';
+                document.getElementById('signup-link').style.display = 'none';
+
+                document.getElementById('user-email').textContent = user.email;
+                document.getElementById('user-info').classList.remove('hidden');
+            })
+            .catch(() => {
+                document.getElementById('login-link').style.display = 'inline-block';
+                document.getElementById('signup-link').style.display = 'inline-block';
+                document.getElementById('user-info').classList.add('hidden');
+            });
+    }
+
+    // Handle logout
+    document.addEventListener('DOMContentLoaded', function () {
+        checkAuthStatus();
+
+        const logoutBtn = document.getElementById('logout-btn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', function () {
+                fetch('/api/logout')
+                    .then(() => {
+                        checkAuthStatus();
+                        window.location.href = '/'; // Optional: redirect to home
+                    });
+            });
+        }
+    });
+</script>
+
 </body>
 </html>

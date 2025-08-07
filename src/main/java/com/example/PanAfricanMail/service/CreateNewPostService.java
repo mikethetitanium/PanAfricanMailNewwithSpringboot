@@ -6,6 +6,9 @@ import com.example.PanAfricanMail.model.CreateNewpost;
 import com.example.PanAfricanMail.repository.CreateNewpostRep;
 import com.example.PanAfricanMail.model.CreateStory;
 import com.example.PanAfricanMail.repository.CreateStoryRepository;
+import com.example.PanAfricanMail.repository.UserRepository;
+import com.example.PanAfricanMail.model.User;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Service
 public class CreateNewPostService {
@@ -19,7 +22,24 @@ public class CreateNewPostService {
 
     @Autowired
     private CreateStoryRepository createStoryRepository;
+
     public CreateStory createStory(CreateStory story) {
         return createStoryRepository.save(story);
+    }
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;  // 🔐 Inject BCrypt encoder
+
+    public boolean userExists(String email, String username) {
+        return userRepository.existsByEmail(email) || userRepository.existsByUsername(username);
+    }
+
+    public User register(User user) {
+        // 🔐 Encode password before saving
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        return userRepository.save(user);
     }
 }

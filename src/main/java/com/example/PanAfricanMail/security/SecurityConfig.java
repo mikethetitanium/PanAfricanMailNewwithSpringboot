@@ -1,6 +1,7 @@
 package com.example.PanAfricanMail.security;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -14,7 +15,12 @@ public class SecurityConfig {
         http
             .csrf().disable()
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/create-post", "/login","/admin", "/signup", "/css/**", "/js/**").permitAll()
+                // Public routes (both GET and POST for /signup)
+                .requestMatchers("/", "/create-post", "/api/login", "/admin", "/css/**", "/js/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/signup").permitAll()
+                .requestMatchers(HttpMethod.POST, "/signup").permitAll()
+
+                // All other requests must be authenticated
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
@@ -32,4 +38,5 @@ public class SecurityConfig {
 
         return http.build();
     }
+    
 }

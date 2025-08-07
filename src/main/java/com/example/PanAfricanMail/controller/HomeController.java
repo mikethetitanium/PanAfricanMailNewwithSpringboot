@@ -3,11 +3,17 @@ package com.example.PanAfricanMail.controller;
 import com.example.PanAfricanMail.model.CreateNewpost;
 import com.example.PanAfricanMail.model.CreateStory;
 import com.example.PanAfricanMail.service.CreateNewPostService;
+import com.example.PanAfricanMail.model.User;
+import com.example.PanAfricanMail.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import java.util.Map;
+import com.example.PanAfricanMail.model.LoginRequest;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class HomeController {
@@ -15,7 +21,6 @@ public class HomeController {
     @Autowired
     private CreateNewPostService createNewPostService;
 
-    
     @GetMapping("/")
     public String home() {
         return "index";
@@ -69,4 +74,52 @@ public class HomeController {
             return ResponseEntity.badRequest().body("Invalid post type");
         }
     }
+
+    @PostMapping("/signup")
+    public ResponseEntity<String> registerUser(@RequestBody User user) {
+        if (createNewPostService.userExists(user.getEmail(), user.getUsername())) {
+            return ResponseEntity.badRequest().body("User with this email or username already exists");
+        }
+        createNewPostService.register(user);
+        return ResponseEntity.ok("User registered successfully");
+    }
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+private PasswordEncoder passwordEncoder;
+
+@PostMapping("/api/login")
+@ResponseBody
+public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest, HttpSession session) {
+    User user = userRepository.findByEmail(loginRequest.getEmail());
+
+    if (user != null && passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+        session.setAttribute("user", user); // ✅ store user in session
+        return ResponseEntity.ok(Map.of("message", "Login successful"));
+    } else {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                             .body(Map.of("error", "Invalid email or password"));
+    }
+}
+
+@GetMapping("/api/current-user")
+public ResponseEntity<?> currentUser(HttpSession session) {
+    User user = (User) session.getAttribute("user");
+
+    if (user != null) {
+        return ResponseEntity.ok(user);
+    } else {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not logged in");
+    }
+}
+
+@GetMapping("/api/logout")
+public ResponseEntity<String> logout(HttpSession session) {
+    session.invalidate(); // Clears session
+    return ResponseEntity.ok("Logged out successfully");
+}
+
+
 }
