@@ -19,6 +19,8 @@ public class SecurityConfig {
                 .requestMatchers("/", "/create-post", "/api/login", "/admin", "/css/**", "/js/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/signup").permitAll()
                 .requestMatchers(HttpMethod.POST, "/signup").permitAll()
+                .requestMatchers("/api/jobs").permitAll()
+
 
                 // All other requests must be authenticated
                 .anyRequest().authenticated()

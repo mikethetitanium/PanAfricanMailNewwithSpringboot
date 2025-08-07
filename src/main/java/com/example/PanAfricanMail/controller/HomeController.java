@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 import com.example.PanAfricanMail.model.LoginRequest;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.ui.Model;
 
 @Controller
 public class HomeController {
@@ -21,10 +22,11 @@ public class HomeController {
     @Autowired
     private CreateNewPostService createNewPostService;
 
-    @GetMapping("/")
-    public String home() {
-        return "index";
-    }
+   @GetMapping("/")
+public String home(Model model) {
+    model.addAttribute("jobs", createNewPostService.getAllJobs());
+    return "index"; // index.html (Thymeleaf) will receive the "jobs" list
+}
 
     @GetMapping("/login")
     public String login() {
@@ -120,6 +122,12 @@ public ResponseEntity<String> logout(HttpSession session) {
     session.invalidate(); // Clears session
     return ResponseEntity.ok("Logged out successfully");
 }
+
+    @GetMapping("/api/jobs")
+    @ResponseBody
+    public ResponseEntity<?> getAllJobs() {
+        return ResponseEntity.ok(createNewPostService.getAllJobs());
+    }
 
 
 }
