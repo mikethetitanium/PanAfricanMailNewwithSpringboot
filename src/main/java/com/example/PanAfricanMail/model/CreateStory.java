@@ -23,7 +23,7 @@ public class CreateStory {
     @Column (name="AUTHOR")
     private String author;
 
-    @Column (name="CONTENT")
+    @Column (name="CONTENT", columnDefinition = "NVARCHAR(MAX)")
     private String content;
 
      @Column (name="type")

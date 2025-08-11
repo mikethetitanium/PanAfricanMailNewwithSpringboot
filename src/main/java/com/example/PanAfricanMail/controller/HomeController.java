@@ -145,11 +145,11 @@ public class HomeController {
         return ResponseEntity.ok(createNewPostService.getAllUsers());
     }
 
-    @DeleteMapping("/api/posts/{postId}")
+    @DeleteMapping("/api/jobs/{postId}")
     @ResponseBody
-    public ResponseEntity<String> deletePost(@PathVariable Long postId) {
-        createNewPostService.deletePost(postId);
-        return ResponseEntity.ok("Post deleted successfully");
+    public ResponseEntity<String> deleteJob(@PathVariable Long postId) {
+        createNewPostService.deleteJob(postId);
+        return ResponseEntity.ok("Job deleted successfully");
     }
 
     @DeleteMapping("/api/stories/{postId}")
@@ -157,6 +157,13 @@ public class HomeController {
     public ResponseEntity<String> deleteStory(@PathVariable Long postId) {
         createNewPostService.deleteStory(postId);
         return ResponseEntity.ok("Story deleted successfully");
+    }
+
+    @DeleteMapping("/api/users/{id}")
+    @ResponseBody
+    public ResponseEntity<String> deleteUser(@PathVariable Long id) {
+        createNewPostService.deleteUser(id);
+        return ResponseEntity.ok("User deleted successfully");
     }
 
 }

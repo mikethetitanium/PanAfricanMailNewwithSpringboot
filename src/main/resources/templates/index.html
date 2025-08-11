@@ -99,13 +99,21 @@
 
 <body>
     <nav class="bg-white shadow-md py-4">
-        <div class="container mx-auto px-4 flex justify-between items-center">
-            <a href="javascript:void(0)" class="navbar-brand flex items-center text-blue-600"
-                onclick="showPage('home')">
+        <div class="container mx-auto px-4 flex items-center justify-between">
+
+            <!-- Left: Brand -->
+            <a href="javascript:void(0)" class="flex items-center text-blue-600" onclick="showPage('home')">
                 <i class="fa-solid fa-briefcase-medical mr-2"></i>
                 <span>PanAfrican<span class="text-orange-500">Mail</span></span>
             </a>
 
+            <!-- Middle: Search -->
+            <div class="flex-1 flex justify-center px-4">
+                <input id="public-search" type="text" placeholder="Search..."
+                    class="w-full max-w-lg px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            </div>
+
+            <!-- Right: Nav Links -->
             <div class="flex items-center space-x-6">
                 <a href="/" class="text-gray-700 hover:text-blue-600 transition" onclick="showPage('home')">
                     <i class="fa-solid fa-home mr-1"></i> Home
@@ -120,7 +128,7 @@
                     </a>
                 </div>
 
-                <!-- User not logged in -->
+                <!-- Auth Buttons -->
                 <div id="auth-buttons" class="flex items-center space-x-2">
                     <button
                         class="px-4 py-2 text-sm font-medium text-blue-600 border border-blue-600 rounded-md hover:bg-blue-50 transition"
@@ -134,7 +142,7 @@
                     </button>
                 </div>
 
-                <!-- User logged in -->
+                <!-- User Menu -->
                 <div id="user-menu" class="hidden">
                     <div class="relative">
                         <button id="user-menu-button"
@@ -159,6 +167,7 @@
             </div>
         </div>
     </nav>
+
     <div class="container mx-auto px-4 py-8">
         <div id="home-page" class="page-transition">
             <div class="flex flex-col md:flex-row justify-between items-start mb-8">
@@ -294,27 +303,27 @@
                                         <span th:text="${story.author}" class="ml-1">Author</span>
                                     </div>
 
-                                    </div>
-
                                 </div>
 
                             </div>
 
-
-
-
                         </div>
 
-                        <div class="mt-6 text-center">
-                            <button
-                                class="px-4 py-2 bg-orange-100 text-orange-500 rounded-md hover:bg-orange-200 transition">
-                                Load More <i class="fa-solid fa-arrow-down ml-1"></i>
-                            </button>
-                        </div>
+
+
+
+                    </div>
+
+                    <div class="mt-6 text-center">
+                        <button
+                            class="px-4 py-2 bg-orange-100 text-orange-500 rounded-md hover:bg-orange-200 transition">
+                            Load More <i class="fa-solid fa-arrow-down ml-1"></i>
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
     </div>
     <footer class="bg-gray-800 text-white py-8 mt-8">
         <div class="container mx-auto px-4">
@@ -525,7 +534,7 @@
         window.addEventListener("DOMContentLoaded", loadJobs);
     </script>
 
-    
+
     <script>
         async function loadStories() {
             try {
@@ -551,6 +560,18 @@
         }
 
         window.addEventListener("DOMContentLoaded", loadStories);
+    </script>
+
+    <script>
+        document.getElementById('public-search').addEventListener('input', function () {
+            let searchTerm = this.value.toLowerCase();
+            let items = document.querySelectorAll('#items-container .item');
+
+            items.forEach(item => {
+                let text = item.textContent.toLowerCase();
+                item.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        });
     </script>
 
 </body>

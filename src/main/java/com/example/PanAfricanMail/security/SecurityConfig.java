@@ -13,33 +13,33 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .csrf().disable()
-            .authorizeHttpRequests(auth -> auth
-                // Public routes (both GET and POST for /signup)
-                .requestMatchers("/", "/create-post", "/api/login", "/admin", "/css/**", "/js/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/signup").permitAll()
-                .requestMatchers(HttpMethod.POST, "/signup").permitAll()
-                .requestMatchers("/api/jobs").permitAll()
-                .requestMatchers("/api/stories").permitAll()
+                .csrf().disable()
+                .authorizeHttpRequests(auth -> auth
+                        // Public routes (both GET and POST for /signup)
+                        .requestMatchers("/", "/create-post", "/api/login", "/admin", "/css/**", "/js/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/signup").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/signup").permitAll()
+                        .requestMatchers("/api/jobs").permitAll()
+                        .requestMatchers("/api/stories").permitAll()
 
+                        .requestMatchers(HttpMethod.DELETE, "/api/stories/**").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/api/jobs/**").permitAll()
+                        .anyRequest().permitAll()
 
-                // All other requests must be authenticated
-                .anyRequest().authenticated()
-            )
-            .formLogin(form -> form
-                .loginPage("/login")
-                .permitAll()
-            )
-            .logout(logout -> logout
-                .logoutUrl("/logout")
-                .logoutSuccessUrl("/")
-            )
-            .exceptionHandling(exception -> exception
-                .authenticationEntryPoint((request, response, authException) ->
-                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized"))
-            );
+                        // All other requests must be authenticated
+                        //.anyRequest().authenticated()
+                        )
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .permitAll())
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/"))
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint((request, response, authException) -> response
+                                .sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized")));
 
         return http.build();
     }
-    
+
 }

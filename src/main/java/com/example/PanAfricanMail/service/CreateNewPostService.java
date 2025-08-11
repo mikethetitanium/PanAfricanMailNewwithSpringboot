@@ -24,7 +24,7 @@ public class CreateNewPostService {
     }
 
     public List<CreateNewpost> getAllJobs() {
-    return createNewPostRepository.findByType("job");
+    return createNewPostRepository.findAll();
 }
 
 
@@ -35,7 +35,7 @@ public class CreateNewPostService {
         return createStoryRepository.save(story);
     }
     public List<CreateStory> getAllStories() {
-        return createStoryRepository.findByType("story");
+        return createStoryRepository.findAll();
     }
 
     @Autowired
@@ -58,7 +58,7 @@ public class CreateNewPostService {
         return userRepository.findAll();
     }
 
-    public void deletePost(Long postId) {
+    public void deleteJob(Long postId) {
         if(!createNewPostRepository.existsById(postId)) {
             throw new IllegalArgumentException("Post with ID " + postId + " does not exist.");
         }
@@ -71,4 +71,11 @@ public class CreateNewPostService {
         }
         createStoryRepository.deleteById(postId);
     }
+
+    public void deleteUser(Long userId) {
+        if(!userRepository.existsById(userId)) {
+            throw new IllegalArgumentException("User with ID " + userId + " does not exist.");
+        }
+        userRepository.deleteById(userId);
+    }   
 }
