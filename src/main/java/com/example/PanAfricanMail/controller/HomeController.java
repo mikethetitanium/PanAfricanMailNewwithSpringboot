@@ -22,11 +22,12 @@ public class HomeController {
     @Autowired
     private CreateNewPostService createNewPostService;
 
-   @GetMapping("/")
-public String home(Model model) {
-    model.addAttribute("jobs", createNewPostService.getAllJobs());
-    return "index"; // index.html (Thymeleaf) will receive the "jobs" list
-}
+    @GetMapping("/")
+    public String home(Model model) {
+        model.addAttribute("jobs", createNewPostService.getAllJobs());
+        model.addAttribute("stories", createNewPostService.getAllStories());
+        return "index"; // index.html (Thymeleaf) will receive the "jobs" list
+    }
 
     @GetMapping("/login")
     public String login() {
@@ -34,7 +35,8 @@ public String home(Model model) {
     }
 
     @GetMapping("/admin")
-    public String admin() {
+    public String admin(Model model) {
+        model.addAttribute("users", createNewPostService.getAllUsers());
         return "admin";
     }
 
@@ -90,38 +92,38 @@ public String home(Model model) {
     private UserRepository userRepository;
 
     @Autowired
-private PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
 
-@PostMapping("/api/login")
-@ResponseBody
-public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest, HttpSession session) {
-    User user = userRepository.findByEmail(loginRequest.getEmail());
+    @PostMapping("/api/login")
+    @ResponseBody
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest, HttpSession session) {
+        User user = userRepository.findByEmail(loginRequest.getEmail());
 
-    if (user != null && passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-        session.setAttribute("user", user); // ✅ store user in session
-        return ResponseEntity.ok(Map.of("message", "Login successful"));
-    } else {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                             .body(Map.of("error", "Invalid email or password"));
+        if (user != null && passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+            session.setAttribute("user", user); // ✅ store user in session
+            return ResponseEntity.ok(Map.of("message", "Login successful"));
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Invalid email or password"));
+        }
     }
-}
 
-@GetMapping("/api/current-user")
-public ResponseEntity<?> currentUser(HttpSession session) {
-    User user = (User) session.getAttribute("user");
+    @GetMapping("/api/current-user")
+    public ResponseEntity<?> currentUser(HttpSession session) {
+        User user = (User) session.getAttribute("user");
 
-    if (user != null) {
-        return ResponseEntity.ok(user);
-    } else {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not logged in");
+        if (user != null) {
+            return ResponseEntity.ok(user);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not logged in");
+        }
     }
-}
 
-@GetMapping("/api/logout")
-public ResponseEntity<String> logout(HttpSession session) {
-    session.invalidate(); // Clears session
-    return ResponseEntity.ok("Logged out successfully");
-}
+    @GetMapping("/api/logout")
+    public ResponseEntity<String> logout(HttpSession session) {
+        session.invalidate(); // Clears session
+        return ResponseEntity.ok("Logged out successfully");
+    }
 
     @GetMapping("/api/jobs")
     @ResponseBody
@@ -129,5 +131,18 @@ public ResponseEntity<String> logout(HttpSession session) {
         return ResponseEntity.ok(createNewPostService.getAllJobs());
     }
 
+    @GetMapping("/api/stories")
+    @ResponseBody
+    public ResponseEntity<?> getAllStories() {
+        return ResponseEntity.ok(createNewPostService.getAllStories());
+    }
+
+    @GetMapping("/api/users")
+    @ResponseBody
+    public ResponseEntity<?> getAllUsers(){
+        return ResponseEntity.ok(createNewPostService.getAllUsers());
+    }
+
+    
 
 }

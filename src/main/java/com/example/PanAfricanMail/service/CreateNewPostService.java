@@ -34,6 +34,9 @@ public class CreateNewPostService {
     public CreateStory createStory(CreateStory story) {
         return createStoryRepository.save(story);
     }
+    public List<CreateStory> getAllStories() {
+        return createStoryRepository.findByType("story");
+    }
 
     @Autowired
     private UserRepository userRepository;
@@ -49,5 +52,9 @@ public class CreateNewPostService {
         // 🔐 Encode password before saving
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
+    }
+
+    public List <User> getAllUsers() {
+        return userRepository.findAll();
     }
 }
