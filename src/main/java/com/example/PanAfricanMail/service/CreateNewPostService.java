@@ -57,4 +57,18 @@ public class CreateNewPostService {
     public List <User> getAllUsers() {
         return userRepository.findAll();
     }
+
+    public void deletePost(Long postId) {
+        if(!createNewPostRepository.existsById(postId)) {
+            throw new IllegalArgumentException("Post with ID " + postId + " does not exist.");
+        }
+        createNewPostRepository.deleteById(postId);
+    }
+
+    public void deleteStory(Long postId) {
+        if(!createStoryRepository.existsById(postId)) {
+            throw new IllegalArgumentException("Story with ID " + postId + " does not exist.");
+        }
+        createStoryRepository.deleteById(postId);
+    }
 }

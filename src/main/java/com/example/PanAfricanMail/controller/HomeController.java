@@ -37,6 +37,8 @@ public class HomeController {
     @GetMapping("/admin")
     public String admin(Model model) {
         model.addAttribute("users", createNewPostService.getAllUsers());
+        model.addAttribute("jobs", createNewPostService.getAllJobs());
+        model.addAttribute("stories", createNewPostService.getAllStories());
         return "admin";
     }
 
@@ -143,6 +145,18 @@ public class HomeController {
         return ResponseEntity.ok(createNewPostService.getAllUsers());
     }
 
-    
+    @DeleteMapping("/api/posts/{postId}")
+    @ResponseBody
+    public ResponseEntity<String> deletePost(@PathVariable Long postId) {
+        createNewPostService.deletePost(postId);
+        return ResponseEntity.ok("Post deleted successfully");
+    }
+
+    @DeleteMapping("/api/stories/{postId}")
+    @ResponseBody
+    public ResponseEntity<String> deleteStory(@PathVariable Long postId) {
+        createNewPostService.deleteStory(postId);
+        return ResponseEntity.ok("Story deleted successfully");
+    }
 
 }

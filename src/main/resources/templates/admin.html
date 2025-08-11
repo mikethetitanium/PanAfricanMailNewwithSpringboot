@@ -80,7 +80,7 @@
 
     <!-- Job Posts Tab -->
     <div id="job-posts-tab" class="admin-content-tab hidden">
-      <div class="border rounded-lg p-4 mb-4">
+      <!-- <div class="border rounded-lg p-4 mb-4">
         <div class="flex justify-between">
           <h3 class="font-semibold text-lg">Senior Software Engineer</h3>
           <button class="text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button>
@@ -88,19 +88,25 @@
         <div class="text-gray-500 text-sm mb-2">TechCorp • San Francisco, CA • Posted by johndoe</div>
         <p class="text-gray-700 mb-3">We're seeking an experienced software engineer to lead development...</p>
         <div class="text-sm text-gray-500">Posted 3 days ago</div>
-      </div>
+      </div> -->
+      <div id="jobs-container" class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+    <!-- Jobs will be inserted here -->
+</div>
     </div>
 
     <!-- Story Posts Tab -->
     <div id="story-posts-tab" class="admin-content-tab hidden">
-      <div class="border rounded-lg p-4 mb-4">
+      <!-- <div class="border rounded-lg p-4 mb-4">
         <div class="flex justify-between">
           <h3 class="font-semibold text-lg">How I Got My Dream Job</h3>
           <button class="text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button>
         </div>
         <div class="text-gray-500 text-sm mb-2">By Anonymous • 1 week ago</div>
         <p class="text-gray-700 mb-3">After several failed interviews, I changed my strategy and landed my dream job...</p>
-      </div>
+      </div> -->
+      <div id="stories-container" class="grid gap-4">
+        <!-- Stories will be inserted here -->
+    </div>
     </div>
   </div>
 
@@ -176,6 +182,127 @@
 
     window.addEventListener("DOMContentLoaded", loadUsers);
 </script>
+
+<script>
+async function loadJobs() {
+    try {
+        const response = await fetch('/api/jobs'); // Replace with your backend API endpoint
+        const jobsData = await response.json();
+        renderJobs(jobsData);
+    } catch (error) {
+        console.error("Failed to load jobs:", error);
+    }
+}
+
+function renderJobs(jobsData) {
+    const container = document.getElementById('jobs-container');
+    container.innerHTML = '';
+
+    jobsData.forEach(job => {
+        const jobCard = `
+            <div class="border rounded-lg p-4 mb-4">
+                <div class="flex justify-between">
+                    <h3 class="font-semibold text-lg">${job.jobTitle}</h3>
+                    <button class="text-red-500 hover:text-red-700" title="Delete Job">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+                <div class="text-gray-500 text-sm mb-2">
+                    ${job.company} • ${job.location} • Posted by ${job.postedBy || 'Unknown'}
+                </div>
+                <p class="text-gray-700 mb-3">
+                    ${job.jobDescription}
+                </p>
+                <div class="text-sm text-gray-500">
+                    Posted ${job.postedAgo || 'recently'}
+                </div>
+            </div>
+        `;
+        container.innerHTML += jobCard;
+    });
+}
+
+// Load jobs when DOM is ready
+window.addEventListener("DOMContentLoaded", () => {
+    loadJobs();
+    const jobTab = document.querySelector('[data-tab="job-posts"]');
+    if (jobTab) jobTab.click();
+});
+</script>
+
+<script>
+async function loadStories() {
+    try {
+        const response = await fetch('/api/stories');
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
+        const text = await response.text();
+        if (!text) {
+            console.warn("No data returned from /api/stories");
+            renderStories([]); // Render "No stories" message
+            return;
+        }
+
+        const storiesData = JSON.parse(text);
+        renderStories(storiesData);
+    } catch (error) {
+        console.error("Failed to load stories:", error);
+    }
+}
+
+
+function renderStories(storiesData) {
+    const container = document.getElementById('stories-container');
+    container.innerHTML = '';
+
+    if (!storiesData || storiesData.length === 0) {
+        container.innerHTML = `<p class="text-gray-500 text-sm">No stories available at the moment.</p>`;
+        return;
+    }
+
+    storiesData.forEach(story => {
+        const storyCard = `
+            <div class="border rounded-lg p-4 mb-4 bg-white shadow-sm hover:shadow-md transition">
+                <div class="flex justify-between">
+                    <h3 class="font-semibold text-lg text-gray-800">${story.title}</h3>
+                    <button class="text-red-500 hover:text-red-700" title="Delete Story">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+                <div class="text-gray-500 text-sm mb-2">
+                    By ${story.author || 'Unknown'} • ${story.date || 'Recently'}
+                </div>
+                <p class="text-gray-700 mb-3">
+                    ${story.content || ''}
+                </p>
+            </div>
+        `;
+        container.innerHTML += storyCard;
+    });
+}
+
+// Load stories when DOM is ready
+window.addEventListener("DOMContentLoaded", () => {
+    const storyTab = document.querySelector('[data-tab="story-posts"]');
+    let storiesLoaded = false; // prevent multiple reloads
+
+    if (storyTab) {
+        storyTab.addEventListener('click', () => {
+            if (!storiesLoaded) {
+                loadStories(); 
+                storiesLoaded = true;
+            }
+        });
+    }
+});
+
+
+</script>
+
+
 
 </body>
 </html>

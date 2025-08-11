@@ -20,6 +20,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/signup").permitAll()
                 .requestMatchers(HttpMethod.POST, "/signup").permitAll()
                 .requestMatchers("/api/jobs").permitAll()
+                .requestMatchers("/api/stories").permitAll()
 
 
                 // All other requests must be authenticated
