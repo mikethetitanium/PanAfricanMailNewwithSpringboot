@@ -32,8 +32,9 @@ public class CreateNewpost {
     @Column (name="SALARY")
     private String salary;
 
-    @Column (name="JOB_DESCRIPTION", columnDefinition = "NVARCHAR(MAX)")
-    private String jobDescription;
+   @Column(name="JOB_DESCRIPTION", columnDefinition = "TEXT")
+private String jobDescription;
+
 
     @Column (name="type")
     private String type;
