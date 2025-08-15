@@ -1,27 +1,31 @@
 package com.example.PanAfricanMail.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import lombok.Data;
 
-@Data
 @Entity
-@Table(name = "stories")
+@Data
+@Table(name="stories")
 public class CreateStory {
-
-    @Id
+ @Id 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+    @Column(name = "POST_ID")
+    private Long postId;
 
-    @Column(name = "title")
+    @Column (name="TITLE")
     private String title;
 
-    @Column(name = "author")
+    @Column (name="AUTHOR")
     private String author;
 
-    @Column(name = "content", columnDefinition = "TEXT")
+    @Column (name="CONTENT", columnDefinition = "TEXT")
     private String content;
 
-    @Column(name = "type")
+     @Column (name="type")
     private String type;
 }
