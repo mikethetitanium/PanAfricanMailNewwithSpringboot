@@ -1,5 +1,5 @@
 # Use an official Java runtime as parent image
-FROM eclipse-temurin:23-jdk-jammy
+FROM eclipse-temurin:23-jdk
 
 WORKDIR /app
 
