@@ -1,21 +1,24 @@
-# Use OpenJDK 23 as the base image
-FROM openjdk:23-jdk-slim
+# Use an official Java runtime as parent image
+FROM eclipse-temurin:23-jdk-jammy
 
-# Set working directory inside container
 WORKDIR /app
 
-# Copy Maven project files
+# Copy Maven wrapper and pom.xml
+COPY mvnw .
+COPY .mvn .mvn
 COPY pom.xml .
+
+# Copy source code
 COPY src ./src
 
-# Build the project
+# Build the JAR inside the container
 RUN ./mvnw clean package -DskipTests
 
-# Copy the built jar
-COPY target/PanAfricanMail-0.0.1-SNAPSHOT.jar app.jar
+# Copy the built JAR to a standard name
+RUN cp target/PanAfricanMail-0.0.1-SNAPSHOT.jar app.jar
 
-# Expose the port (Render sets PORT as environment variable)
+# Expose port
 EXPOSE 8080
 
-# Run the application
+# Run the Spring Boot app
 ENTRYPOINT ["java","-jar","app.jar"]
