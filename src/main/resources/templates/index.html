@@ -10,6 +10,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.4.0/purify.min.js"></script>
+
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -207,7 +209,8 @@
                                     <!-- Description -->
                                     <div class="text-sm text-gray-700">
                                         <span class="font-medium">Description:</span>
-                                        <span class="ml-1" th:text="${job.jobDescription}">Description</span>
+                                       <span class="ml-1 break-all block w-full" th:utext="${job.jobDescription}">Description</span>
+
                                     </div>
 
 
@@ -294,7 +297,8 @@
                                     <!-- Description -->
                                     <div class="text-sm text-gray-700">
                                         <span class="font-medium">Description:</span>
-                                        <span class="ml-1" th:text="${story.content}">Description</span>
+                                       <span class="ml-1 break-words block w-full" th:utext="${story.content}">Description</span>
+
                                     </div>
 
                                     <!-- Author -->
@@ -536,30 +540,45 @@
 
 
     <script>
-        async function loadStories() {
-            try {
-                const response = await fetch('/api/stories');
-                const stories = await response.json();
+       async function loadStories() {
+  try {
+    const response = await fetch('/api/stories');
+    const stories = await response.json();
 
-                const storyList = document.getElementById("story-list");
-                storyList.innerHTML = ""; // Clear any old stories
+    const storyList = document.getElementById("story-list");
+    storyList.innerHTML = ""; // Clear old stories
 
-                stories.forEach(story => {
-                    const storyCard = document.createElement("div");
-                    storyCard.className = "story-card card bg-white border rounded-lg p-4 shadow-sm";
-                    storyCard.innerHTML = `
-                <h3 class="font-semibold text-lg">${story.title}</h3>
-                <div class="text-gray-500 text-sm mb-2">By ${story.author}</div>
-                <p class="text-gray-700 mb-3">${story.content}</p>
-            `;
-                    storyList.appendChild(storyCard);
-                });
-            } catch (error) {
-                console.error("Failed to load stories:", error);
-            }
-        }
+    stories.forEach(story => {
+      const storyCard = document.createElement("div");
+      storyCard.className = "story-card bg-white border rounded-lg p-4 shadow-sm mb-4";
 
-        window.addEventListener("DOMContentLoaded", loadStories);
+      const title = document.createElement("h3");
+      title.className = "font-semibold text-lg";
+      title.textContent = story.title || "Untitled";
+
+      const author = document.createElement("div");
+      author.className = "text-gray-500 text-sm mb-2";
+      author.textContent = `By ${story.author || "Unknown"}`;
+
+      const contentDiv = document.createElement("div");
+      contentDiv.className = "story-content prose max-w-none text-gray-700 mb-3";
+      
+      // Directly insert HTML (already converted from RTF on backend)
+      contentDiv.innerHTML = story.content || "";
+
+      storyCard.appendChild(title);
+      storyCard.appendChild(author);
+      storyCard.appendChild(contentDiv);
+      storyList.appendChild(storyCard);
+    });
+  } catch (error) {
+    console.error("Failed to load stories:", error);
+  }
+}
+
+window.addEventListener("DOMContentLoaded", loadStories);
+
+
     </script>
 
     <script>
