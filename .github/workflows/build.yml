@@ -2,9 +2,10 @@ name: Build Spring Boot JAR
 
 on:
   push:
-    branches: [ main ]   # or your main branch
+    branches: [ main ]
   pull_request:
     branches: [ main ]
+  workflow_dispatch:   # Allows manual triggering
 
 jobs:
   build:
@@ -24,7 +25,7 @@ jobs:
       run: mvn clean package -DskipTests
 
     - name: Upload JAR as artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
-        name: app-jar
+        name: PanAfricanMail-JAR
         path: target/*.jar
